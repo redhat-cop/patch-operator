@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: simple-injection-test
+  annotations:
+    "redhat-cop.redhat.io/patch": |
+      metadata:
+        annotations:
+          hello: ciao
+data:
+  pippo: pluto 

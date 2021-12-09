@@ -1,0 +1,18 @@
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: Patch
+metadata:
+  name: simple-patch
+spec:
+  patch:
+    targetObjectRef:
+      apiVersion: v1
+      kind: ServiceAccount
+      name: test
+      namespace: test-patch-operator
+    patchTemplate: |
+      metadata:
+        annotations:
+          hello: bye
+          test3: test3
+          test6: test6
+    patchType: application/strategic-merge-patch+json    

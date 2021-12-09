@@ -1,0 +1,26 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: patch-operator-inject
+  annotations:
+    service.beta.openshift.io/inject-cabundle: "true"
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: patch-operator-webhook-service
+      namespace: patch-operator
+      path: /inject
+  failurePolicy: Fail
+  name: patch-operator-inject.redhatcop.redhat.io
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    resources:
+    - configmaps
+  sideEffects: None

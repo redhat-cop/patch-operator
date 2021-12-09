@@ -1,0 +1,26 @@
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: Patch
+metadata:
+  name: field-patch
+spec:
+  patch:
+    targetObjectRef:
+      apiVersion: v1
+      kind: ServiceAccount
+      name: test
+      namespace: test-patch-operator
+    patchTemplate: |
+      metadata:
+        annotations:
+          {{ (index . 1) }}: {{ (index . 2) }}
+    patchType: application/strategic-merge-patch+json
+    sourceObjectRefs:
+    - apiVersion: v1
+      kind: Namespace
+      name: test-patch-operator
+      fieldPath: $.metadata.uid
+    - apiVersion: v1
+      kind: ServiceAccount
+      name: default
+      namespace: test-patch-operator
+      fieldPath: $.metadata.uid  

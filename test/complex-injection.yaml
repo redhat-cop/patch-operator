@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: complex-injection-test
+  annotations:
+    "redhat-cop.redhat.io/patch": |
+      metadata:
+        annotations:
+          hello: "{{ (lookup "v1" "Namespace" "" "test-patch-operator").metadata.uid }}"
+data:
+  pippo: pluto 
