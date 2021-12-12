@@ -320,8 +320,6 @@ oc new-project patch-operator
 - After clicking the install button, you can then select the namespace that you would like to install this to as well as the installation strategy you would like to proceed with (`Automatic` or `Manual`).
 - Once you've made your selection, you can select `Subscribe` and the installation will begin. After a few moments you can go ahead and check your namespace and you should see the operator running.
 
-![Cert Utils Operator](./media/patch-operator.png)
-
 #### Deploying from OperatorHub using CLI
 
 If you'd like to launch this operator from the command line, you can use the manifests contained in this repository by running the following:
