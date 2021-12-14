@@ -245,6 +245,8 @@ A `patch` has the following fields:
 | no | N/A | null | multiple selection  |
 | no | N/A | not null | single selection |
 
+Selection can be further narrowed down by filtering by labels and/or annotations using the `labelSelector` and `annotationSelector` fields. The patch will be applied to all of the selected instances.
+
 `sourceObjectRefs` these are the objects that will be watched and become part of the parameters of the patch template. Name and Namespace of sourceRefObjects are interpreted as golang templates with the current target instance and the only parameter. This allows to select different source object for each target object.
 
 So, for example, with this patch:
