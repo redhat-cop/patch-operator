@@ -103,7 +103,7 @@ func (r *PatchReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		return r.ManageError(ctx, instance, err)
 	}
 
-	lockedPatches, err := lockedpatch.GetLockedPatches(map[string]patchv1alpha1.Patch{
+	lockedPatches, err := lockedpatch.GetLockedPatches(map[string]patchv1alpha1.PatchSpec{
 		"patch": *instance.Spec.Patch,
 	}, config, rlog)
 

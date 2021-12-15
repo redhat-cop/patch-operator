@@ -1,6 +1,7 @@
 domain: redhat.io
 layout:
 - go.kubebuilder.io/v3
+multigroup: true
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
@@ -17,7 +18,7 @@ resources:
   path: github.com/redhat-cop/patch-operator/api/v1alpha1
   version: v1alpha1
   webhooks:
-    validation: true
     defaulting: true
+    validation: true
     webhookVersion: v1
 version: "3"

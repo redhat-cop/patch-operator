@@ -90,7 +90,7 @@ func (in *PatchSpec) DeepCopyInto(out *PatchSpec) {
 	*out = *in
 	if in.Patch != nil {
 		in, out := &in.Patch, &out.Patch
-		*out = new(apiv1alpha1.Patch)
+		*out = new(apiv1alpha1.PatchSpec)
 		(*in).DeepCopyInto(*out)
 	}
 	out.ServiceAccountRef = in.ServiceAccountRef

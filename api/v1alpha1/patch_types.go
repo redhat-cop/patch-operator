@@ -34,7 +34,7 @@ type PatchSpec struct {
 
 	// Patches is a list of patches that should be enforced at runtime.
 	// +kubebuilder:validation:Required
-	Patch *utilsv1alpha1.Patch `json:"patch,omitempty"`
+	Patch *utilsv1alpha1.PatchSpec `json:"patch,omitempty"`
 
 	// ServiceAccountRef is the service account to be used to run the controllers associated with this configuration
 	// +kubebuilder:validation:Required
