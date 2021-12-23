@@ -1,9 +1,18 @@
 
-@@ -4,6 +4,7 @@
+
+# Patch Operator
+
 ![build status](https://github.com/redhat-cop/patch-operator/workflows/push/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/redhat-cop/patch-operator)](https://goreportcard.com/report/github.com/redhat-cop/patch-operator)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/redhat-cop/patch-operator)
 [![CRD Docs](https://img.shields.io/badge/CRD-Docs-brightgreen)](https://doc.crds.dev/github.com/redhat-cop/patch-operator)
+
+The patch operator helps with defining patches in a declarative way. This operator has two main feature:
+
+1. [ability to patch an object at creation time via a mutating webhook](#creation-time-patch-injection)
+2. [ability to enforce patches on one or more object via a controller](#runtime-patch-enforcement)
+
+## Index
 
 - [Patch Operator](#patch-operator)
   - [Creation-time patch injection](#creation-time-patch-injection)
@@ -28,12 +37,6 @@
   - [Releasing](#releasing)
     - [Cleaning up](#cleaning-up)
 
-# Patch Operator
-
-The patch operator helps with defining patches in a declarative way. This operator has two main feature:
-
-1. [ability to patch an object at creation time via a mutating webhook](#creation-time-patch-injection)
-2. [ability to enforce patches on one or more object via a controller](#runtime-patch-enforcement)
 
 ## Creation-time patch injection
 
