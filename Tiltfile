@@ -1,7 +1,7 @@
 # -*- mode: Python -*-
 
 compile_cmd = 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/manager main.go'
-image = 'quay.io/' + os.environ['REPO'] + '/patch-operator'
+image = 'quay.io/' + os.environ['repo'] + '/patch-operator'
 
 local_resource(
   'patch-operator-compile',

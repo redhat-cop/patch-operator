@@ -2,3 +2,7 @@
   path: /spec/template/spec/containers/1/image
   value:
     quay.io/raffaelespazzoli/patch-operator:latest
+- op: add
+  path: /spec/template/spec/containers/1/args/-
+  value:
+    --zap-devel=true   

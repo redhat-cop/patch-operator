@@ -34,7 +34,7 @@ type PatchSpec struct {
 
 	// Patches is a list of patches that should be enforced at runtime.
 	// +kubebuilder:validation:Required
-	Patch *utilsv1alpha1.PatchSpec `json:"patch,omitempty"`
+	Patches map[string]utilsv1alpha1.PatchSpec `json:"patches,omitempty"`
 
 	// ServiceAccountRef is the service account to be used to run the controllers associated with this configuration
 	// +kubebuilder:validation:Required
@@ -46,11 +46,13 @@ type PatchSpec struct {
 type PatchStatus struct {
 	// ReconcileStatus this is the general status of the main reconciler
 	// +kubebuilder:validation:Optional
-	Conditions utilsv1alpha1.Conditions `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
+	// +listType=map
+	// +listMapKey=type
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
 
-	//LockedResourceStatuses contains the reconcile status for each of the managed resources
+	//PatchStatuses contains the reconcile status for each of the managed patch
 	// +kubebuilder:validation:Optional
-	PatchedResourceStatuses map[string]utilsv1alpha1.Conditions `json:"patchedResourceStatuses,omitempty"`
+	PatchStatuses map[string]utilsv1alpha1.ConditionMap `json:"patchStatuses,omitempty"`
 }
 
 //+kubebuilder:object:root=true

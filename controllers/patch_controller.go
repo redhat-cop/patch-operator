@@ -20,7 +20,6 @@ import (
 	"context"
 	errs "errors"
 
-	patchv1alpha1 "github.com/redhat-cop/operator-utils/api/v1alpha1"
 	"github.com/redhat-cop/operator-utils/pkg/util"
 	"github.com/redhat-cop/operator-utils/pkg/util/apis"
 	"github.com/redhat-cop/operator-utils/pkg/util/lockedresourcecontroller"
@@ -103,9 +102,7 @@ func (r *PatchReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		return r.ManageError(ctx, instance, err)
 	}
 
-	lockedPatches, err := lockedpatch.GetLockedPatches(map[string]patchv1alpha1.PatchSpec{
-		"patch": *instance.Spec.Patch,
-	}, config, rlog)
+	lockedPatches, err := lockedpatch.GetLockedPatches(instance.Spec.Patches, config, rlog)
 
 	if err != nil {
 		rlog.Error(err, "unable to get patches for", "instance", instance)
@@ -190,10 +187,7 @@ func (er *PatchReconciler) ManageError(ctx context.Context, instance *redhatcopv
 		Status:             metav1.ConditionTrue,
 	}
 	instance.Status.Conditions = apis.AddOrReplaceCondition(condition, instance.Status.Conditions)
-	//we expect only one element
-	for _, conditionMap := range er.GetLockedPatchStatuses(instance) {
-		instance.Status.PatchedResourceStatuses = conditionMap
-	}
+	instance.Status.PatchStatuses = er.GetLockedPatchStatuses(instance)
 	err := er.GetClient().Status().Update(ctx, instance)
 	if err != nil {
 		if errors.IsResourceExpired(err) {
@@ -220,9 +214,7 @@ func (er *PatchReconciler) ManageSuccess(ctx context.Context, instance *redhatco
 	}
 	instance.Status.Conditions = apis.AddOrReplaceCondition(condition, instance.Status.Conditions)
 	//we expect only one element
-	for _, conditionMap := range er.GetLockedPatchStatuses(instance) {
-		instance.Status.PatchedResourceStatuses = conditionMap
-	}
+	instance.Status.PatchStatuses = er.GetLockedPatchStatuses(instance)
 	err := er.GetClient().Status().Update(ctx, instance)
 	if err != nil {
 		if errors.IsResourceExpired(err) {
