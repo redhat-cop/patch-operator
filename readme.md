@@ -1,5 +1,4 @@
 
-
 # Patch Operator
 
 ![build status](https://github.com/redhat-cop/patch-operator/workflows/push/badge.svg)
@@ -15,11 +14,13 @@ The patch operator helps with defining patches in a declarative way. This operat
 ## Index
 
 - [Patch Operator](#patch-operator)
+  - [Index](#index)
   - [Creation-time patch injection](#creation-time-patch-injection)
     - [Security Considerations](#security-considerations)
     - [Installing the creation time webhook](#installing-the-creation-time-webhook)
   - [Runtime patch enforcement](#runtime-patch-enforcement)
     - [Patch Controller Security Considerations](#patch-controller-security-considerations)
+    - [Patch Controller Performance Considerations](#patch-controller-performance-considerations)
   - [Deploying the Operator](#deploying-the-operator)
     - [Multiarch Support](#multiarch-support)
     - [Deploying from OperatorHub](#deploying-from-operatorhub)
@@ -36,7 +37,6 @@ The patch operator helps with defining patches in a declarative way. This operat
   - [Deploy to OLM via bundle](#deploy-to-olm-via-bundle)
   - [Releasing](#releasing)
     - [Cleaning up](#cleaning-up)
-
 
 ## Creation-time patch injection
 
@@ -207,30 +207,31 @@ metadata:
 spec:
   serviceAccountRef:
     name: default
-  patch:
-    targetObjectRef:
-      apiVersion: config.openshift.io/v1
-      kind: OAuth
-      name: cluster
-    patchTemplate: |
-      spec:
-        identityProviders:
-        - name: backstage-demo-github 
-          mappingMethod: claim 
-          type: GitHub
-          github:
-            clientID: "{{ (index . 1).data.client_id | b64dec }}" 
-            clientSecret: 
-              name: ocp-github-app-credentials
-            organizations: 
-            - raf-backstage-demo
-            teams: []            
-    patchType: application/merge-patch+json
-    sourceObjectRefs:
-    - apiVersion: v1
-      kind: Secret
-      name: ocp-github-app-credentials
-      namespace: openshift-config
+  patches:
+    gitlab-ocp-oauth-provider:
+      targetObjectRef:
+        apiVersion: config.openshift.io/v1
+        kind: OAuth
+        name: cluster
+      patchTemplate: |
+        spec:
+          identityProviders:
+          - name: backstage-demo-github 
+            mappingMethod: claim 
+            type: GitHub
+            github:
+              clientID: "{{ (index . 1).data.client_id | b64dec }}" 
+              clientSecret: 
+                name: ocp-github-app-credentials
+              organizations: 
+              - raf-backstage-demo
+              teams: []            
+      patchType: application/merge-patch+json
+      sourceObjectRefs:
+      - apiVersion: v1
+        kind: Secret
+        name: ocp-github-app-credentials
+        namespace: openshift-config
 ```
 
 This will cause the OAuth object to be patched and the patch to be enforced. That means that if anything changes on the secret that we use a parameter (which may be rotated) or in Oauth object itself, the patch will be reapplied. In this case we are adding a gitlab authentication provider.
@@ -291,6 +292,11 @@ The `deployer` service accounts from all namespaces are selected as target of th
 ### Patch Controller Security Considerations
 
 The patch enforcement enacted by the patch controller is executed with a client which uses the service account referenced by the `serviceAccountRef` field. So before a patch object can actually work an administrator must have granted the needed permissions to a service account in the same namespace. The `serviceAccountRef` will default to the `default` service account if not specified.
+
+### Patch Controller Performance Considerations
+
+The patch controller will create a controller-manager and per `Patch` object and a reconciler for each of the `PatchSpec` defined in the array on patches in the `Patch` object.
+These reconcilers share the same cached client. In order to be able to watch changes on target and source objects of a `PatchSpec`, all of the target and source object type instances will be cached by the client. This is a normal behavior of a controller-manager client, but it implies that if you create patches on object types that have many instances in etcd (Secrets, ServiceAccounts, Namespaces for example), the patch operator instance will require a significant amount of memory. A way to contain this issue is to try to aggregate together `PatchSpec` that deal with the same object types. This will cause those object type instances to cached only once.
 
 ## Deploying the Operator
 
@@ -379,7 +385,7 @@ exit
 ### Run the operator
 
 ```shell
-export repo=raffaelespazzoli #replace with yours, this has also to be replaced in the following files: Tiltfile, ./config/local-development/tilt/replace-image.yaml. Further improvements may be able to remove this constraint.
+export repo=raffaelespazzoli
 docker login quay.io/$repo
 oc new-project patch-operator
 oc project patch-operator
