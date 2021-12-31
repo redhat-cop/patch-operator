@@ -385,7 +385,7 @@ exit
 ### Run the operator
 
 ```shell
-export repo=raffaelespazzoli #replace with yours, this has also to be replaced in the following files: Tiltfile, ./config/local-development/tilt/replace-image.yaml. Further improvements may be able to remove this constraint.
+export repo=raffaelespazzoli
 docker login quay.io/$repo
 oc new-project patch-operator
 oc project patch-operator
