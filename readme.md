@@ -263,22 +263,23 @@ metadata:
 spec:
   serviceAccountRef:
     name: default
-  patch:
-    targetObjectRef:
-      apiVersion: v1
-      kind: ServiceAccount
-      name: deployer
-    patchTemplate: |
-      metadata:
-        annotations:
-          {{ (index . 1).metadata.uid }}: {{ (index . 1) }}
-    patchType: application/strategic-merge-patch+json
-    sourceObjectRefs:
-    - apiVersion: v1
-      kind: ServiceAccount
-      name: default
-      namespace: "{{ .metadata.namespace }}"
-      fieldPath: $.metadata.uid
+  patches:
+     multiple-namespaced-targets-patch:
+      targetObjectRef:
+        apiVersion: v1
+        kind: ServiceAccount
+        name: deployer
+      patchTemplate: |
+        metadata:
+          annotations:
+            {{ (index . 1).metadata.uid }}: {{ (index . 1) }}
+      patchType: application/strategic-merge-patch+json
+      sourceObjectRefs:
+      - apiVersion: v1
+        kind: ServiceAccount
+        name: default
+        namespace: "{{ .metadata.namespace }}"
+        fieldPath: $.metadata.uid
 ```
 
 The `deployer` service accounts from all namespaces are selected as target of this patch, each patch template will receive a different parameter and that is the `default` service account of the same namespace as the namespace of the `deployer` service account being processed.
