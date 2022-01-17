@@ -6,10 +6,10 @@
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/redhat-cop/patch-operator)
 [![CRD Docs](https://img.shields.io/badge/CRD-Docs-brightgreen)](https://doc.crds.dev/github.com/redhat-cop/patch-operator)
 
-The patch operator helps with defining patches in a declarative way. This operator has two main feature:
+The patch operator helps with defining patches in a declarative way. This operator has two main features:
 
 1. [ability to patch an object at creation time via a mutating webhook](#creation-time-patch-injection)
-2. [ability to enforce patches on one or more object via a controller](#runtime-patch-enforcement)
+2. [ability to enforce patches on one or more objects via a controller](#runtime-patch-enforcement)
 
 ## Index
 
@@ -40,7 +40,7 @@ The patch operator helps with defining patches in a declarative way. This operat
 
 ## Creation-time patch injection
 
-Why apply a patch at creation time when you could directly create the correct object. The reason is that sometime the correct value depends on configuration set on the specifci cluster in which teh object is being deployed. For example a ingress/route hostname might depend on the specific cluster. Consider the following example based on cert-manager:
+Why apply a patch at creation time when you could directly create the correct object? The reason is that sometime the correct value depends on configuration set on the specific cluster in which the object is being deployed. For example, an ingress/route hostname might depend on the specific cluster. Consider the following example based on cert-manager:
 
 ```yaml
 apiVersion: cert-manager.io/v1
@@ -105,7 +105,7 @@ The annotation specifies a patch that will be applied by a [MutatingWebhook](htt
 
 Two annotations influences the behavior of this MutatingWebhook
 
-1. "redhat-cop.redhat.io/patch" : this is the patch itself. The patch is evaluated as a template with the object itself as it's nly parameter. The template is expressed in golang template notation and supports the same functions as helm template. Including the lookup function which plays a major role here. The patch must be expressed in yaml for readability. It will be converted to json by the webhook logic.
+1. "redhat-cop.redhat.io/patch" : this is the patch itself. The patch is evaluated as a template with the object itself as it's only parameter. The template is expressed in golang template notation and supports the same functions as helm template including the [lookup](https://helm.sh/docs/chart_template_guide/functions_and_pipelines/#using-the-lookup-function) function which plays a major role here. The patch must be expressed in yaml for readability. It will be converted to json by the webhook logic.
 2. "redhat-cop.redhat.io/patch-type" : this is the type of json patch. The possible values are: `application/json-patch+json`, `application/merge-patch+json` and `application/strategic-merge-patch+json`. If this annotation is omitted it defaults to strategic merge.
 
 ### Security Considerations
@@ -114,7 +114,7 @@ The lookup function, if used by the template, is executed with a client which im
 
 ### Installing the creation time webhook
 
-The creation time webhook is not installed by the operator. This is because there is no way to know which specific object type should be intercepted and intercepting all of the types would be to inefficient. It's up to the administrator then to install the webhook. Here is some guidance.
+The creation time webhook is not installed by the operator. This is because there is no way to know which specific object type should be intercepted and intercepting all of the types would be too inefficient. It's up to the administrator then to install the webhook. Here is some guidance.
 
 If you installed the operator via OLM, use the following webhook template:
 
@@ -180,7 +180,7 @@ You should need to enable the webhook only for `CREATE` operations. So for examp
 
 ## Runtime patch enforcement
 
-There are situation when we need to patch pre-existing objects. Again this is a use case that is hard to model with gitops operators which will work only on object that they own. Especially with sophisticated Kubernetes distributions, it is not uncommon that a kubernetes instance, when is installed, is configured with some default settings. Changing those configurations means patching those objects. For example let's take the case of Openshift Oauth configuration. This object pre-exist and it is expected to be patched with any newly enabled authentication mechanism. This is how it looks like after installation:
+There are situations when we need to patch pre-existing objects. Again this is a use case that is hard to model with gitops operators which will work only on object that they own. Especially with sophisticated Kubernetes distributions, it is not uncommon that a Kubernetes instance, at installation time, is configured with some default settings. Changing those configurations means patching those objects. For example, let's take the case of OpenShift Oauth configuration. This object is present by default and it is expected to be patched with any newly enabled authentication mechanism. This is how it looks like after installation:
 
 ```yaml
 apiVersion: config.openshift.io/v1
@@ -216,7 +216,7 @@ spec:
       patchTemplate: |
         spec:
           identityProviders:
-          - name: backstage-demo-github 
+          - name: my-github 
             mappingMethod: claim 
             type: GitHub
             github:
@@ -224,7 +224,7 @@ spec:
               clientSecret: 
                 name: ocp-github-app-credentials
               organizations: 
-              - raf-backstage-demo
+              - my-org
               teams: []            
       patchType: application/merge-patch+json
       sourceObjectRefs:
