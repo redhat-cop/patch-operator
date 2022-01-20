@@ -390,6 +390,7 @@ export repo=raffaelespazzoli
 docker login quay.io/$repo
 oc new-project patch-operator
 oc project patch-operator
+envsubst < config/local-development/tilt/env-replace-image.yaml > config/local-development/tilt/replace-image.yaml
 tilt up
 ```
 
