@@ -11,6 +11,7 @@ metadata:
     description: An operator to apply patches to Kubernetes objects in a declarative
       way.
     operatorframework.io/suggested-namespace: patch-operator
+    operatorframework.io/cluster-monitoring: "true"
     operators.openshift.io/infrastructure-features: '["Disconnected"]'
     repository: https://github.com/redhat-cop/patch-operator
     support: Best Effort
