@@ -1,0 +1,21 @@
+apiVersion: v1
+entries:
+  patch-operator:
+  - apiVersion: v1
+    appVersion: v0.1.1
+    created: "2022-01-27T08:33:33.34625045-05:00"
+    description: Helm chart that deploys patch-operator
+    digest: 3ca4f6ae8ab5440840bc7704813290d4f5dd5cee421cbd159f154b722673793c
+    keywords:
+    - volume
+    - storage
+    - csi
+    - expansion
+    - monitoring
+    name: patch-operator
+    sources:
+    - https://github.com/redhat-cop/patch-operator
+    urls:
+    - https://redhat-cop.github.io/patch-operator/patch-operator/patch-operator-v0.1.1.tgz
+    version: v0.1.1
+generated: "2022-01-27T08:33:33.345159453-05:00"
