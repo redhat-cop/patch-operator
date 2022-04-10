@@ -51,7 +51,7 @@ prometheus:
         - -c
         - | 
             while true; do
-              out=$(wget -O - --post-data="query=controller_runtime_active_workers%7Bnamespace%3D%22vault-config-operator-local%22%7D%0A" localhost:9090/api/v1/query)
+              out=$(wget -O - --post-data="query=controller_runtime_active_workers%7Bnamespace%3D%22patch-operator-local%22%7D%0A" localhost:9090/api/v1/query)
               if [[ -z "$(echo ${out})" || "$(echo $out | grep -F '{"status":"success","data":{"resultType":"vector","result":[]}}')" ]]; then
                 echo "No Metrics yet..."
                 echo "${out}"

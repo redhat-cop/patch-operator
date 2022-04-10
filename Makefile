@@ -252,7 +252,8 @@ HELM_TEST_IMG_TAG ?= helmchart-test
 .PHONY: helmchart-test
 helmchart-test: kind-setup helmchart
 	$(MAKE) IMG=${HELM_TEST_IMG_NAME}:${HELM_TEST_IMG_TAG} docker-build
-	$(KIND) load docker-image ${HELM_TEST_IMG_NAME}:${HELM_TEST_IMG_TAG}
+	docker tag ${HELM_TEST_IMG_NAME}:${HELM_TEST_IMG_TAG} docker.io/library/${HELM_TEST_IMG_NAME}:${HELM_TEST_IMG_TAG}
+	$(KIND) load docker-image ${HELM_TEST_IMG_NAME}:${HELM_TEST_IMG_TAG} docker.io/library/${HELM_TEST_IMG_NAME}:${HELM_TEST_IMG_TAG}
 	$(HELM) repo add jetstack https://charts.jetstack.io
 	$(HELM) install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1 --set installCRDs=true
 	$(HELM) repo add prometheus-community https://prometheus-community.github.io/helm-charts
