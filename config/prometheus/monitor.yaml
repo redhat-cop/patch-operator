@@ -4,7 +4,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   labels:
-    control-plane: controller-manager
+    control-plane: patch-operator
   name: controller-manager-metrics-monitor
   namespace: system
 spec:
@@ -14,8 +14,12 @@ spec:
       port: https
       scheme: https
       tlsConfig:
-        caFile: /etc/prometheus/configmaps/serving-certs-ca-bundle/service-ca.crt
+        ca: 
+          secret:
+            key: 'tls.crt'
+            name: patch-operator-certs
+            optional: false
         serverName: $(METRICS_SERVICE_NAME).$(METRICS_SERVICE_NAMESPACE).svc
   selector:
     matchLabels:
-      operator: egressip-ipam-operator
+      control-plane: patch-operator
