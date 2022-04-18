@@ -116,29 +116,119 @@ The lookup function, if used by the template, is executed with a client which im
 
 The creation time webhook is not installed by the operator. This is because there is no way to know which specific object type should be intercepted and intercepting all of the types would be too inefficient. It's up to the administrator then to install the webhook. Here is some guidance.
 
-If you installed the operator via OLM, use the following webhook template:
+The configurations that needs to be applied in order to support creation time webhooks depends on how the operator was installed (OLM or Helm chart).
+
+#### Enabling creation time time webhook (OLM)
+
+If you installed the operator via OLM, the certificate that the OLM generates to expose the webhook need to be applied dynamically to the `MutatingWebhookConfiguration` resource. To support this action, we can use the Patch operator to perform the needed configurations.
+
+First, create the following resources which will create a ServiceAccount and RBAC policies so that the operator can apply the needed configurations:
 
 ```yaml
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  creationTimestamp: null
+  name: mutatingwebhook-patcher
+  namespace: patch-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+  name: mutatingwebhookconfiguration-patcher
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - "admissionregistration.k8s.io"
+  resources:
+  - mutatingwebhookconfigurations
+  verbs:
+  - get
+  - list
+  - watch
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: mutatingwebhookconfiguration-patcher
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: mutatingwebhookconfiguration-patcher
+subjects:
+- kind: ServiceAccount
+  name: mutatingwebhook-patcher
+  namespace: patch-operator
+```
+
+Next, apply the following _Patch_ resource which will look up the `Secret` the OLM created containing the CA used by the webhook
+
+```yaml
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: Patch
+metadata:
+  name: patch-operator-mutatingwebhookconfiguration
+  namespace: patch-operator
+spec:
+  serviceAccountRef:
+    name: mutatingwebhook-patcher
+  patches:
+    patch-operator-mutatingwebhookconfigurations:
+      targetObjectRef:
+        apiVersion: admissionregistration.k8s.io/v1
+        kind: MutatingWebhookConfiguration
+        labelSelector:
+          matchLabels:
+            redhat-cop.redhat.io/patch-operator: "true"
+      patchTemplate: '[{"op": "replace", "path": "/webhooks/0/clientConfig/caBundle", "value":"{{ (index (index . 1).data "olmCAKey") }}"}]'     
+      patchType: application/json-patch+json
+      sourceObjectRefs:
+      - apiVersion: v1
+        kind: Secret
+        name: patch-operator-controller-manager-service-cert
+        namespace: patch-operator
+```
+
+Note that the `targetObjectRef` uses a _Label Selector_ to query for _MutatingWebhookConfigurations_ with the label `redhat-cop.redhat.io/patch-operator: "true"`.
+
+The following is an example of a _MutatingWebhookConfiguration_ with the required label that can be used to support the creation time webhook.
+
+```yaml
+---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   name: patch-operator-inject
-  annotations:
-    service.beta.openshift.io/inject-cabundle: "true"
+  labels:
+    redhat-cop.redhat.io/patch-operator: "true"
 webhooks:
 - admissionReviewVersions:
   - v1
   clientConfig:
     service:
-      name: patch-operator-webhook-service
+      name: patch-operator-controller-manager-service
       namespace: patch-operator
       path: /inject
+    caBundle: Cg==
   failurePolicy: Fail
   name: patch-operator-inject.redhatcop.redhat.io
   rules:
   - << add your intercepted objects here >>
   sideEffects: None
 ```
+
+#### Enabling creation time time webhook (Helm)
 
 If you installed the operator via the Helm chart and are using cert-manager, use the following webhook template:
 
@@ -164,7 +254,11 @@ webhooks:
   sideEffects: None
 ```  
 
-You should need to enable the webhook only for `CREATE` operations. So for example to enable the webhook on configmaps:
+No additional steps are needed since as cert-manager manages setting the `caBundle` field on the MutatingWebhookConfiguration
+
+#### Webhook rules
+
+For the rules that apply to webhooks, you should need to enable the webhook only for `CREATE` operations. So for example to enable the webhook on configmaps:
 
 ```yaml
   rules:
