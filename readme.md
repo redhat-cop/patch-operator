@@ -428,11 +428,10 @@ oc new-project patch-operator
 
 #### Deploying from OperatorHub using CLI
 
-If you'd like to launch this operator from the command line, you can use the manifests contained in this repository by running the following:
-
-oc new-project patch-operator
+If you'd like to launch this operator from the command line, you can use the manifests contained in this repository by running the following commands from the folder where you cloned the repository:
 
 ```shell
+oc new-project patch-operator
 oc apply -f config/operatorhub -n patch-operator
 ```
 
