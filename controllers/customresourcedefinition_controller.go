@@ -69,7 +69,6 @@ func (r *CustomResourceDefinitionReconciler) setModels(openapiModels openapi.Mod
 }
 
 //+kubebuilder:rbac:groups=apiextensions.k8s.io,resources=customresourcedefinitions,verbs=get;list;watch
-//+kubebuilder:rbac:groups="",resources=users;groups;serviceaccounts,verbs=impersonate
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
