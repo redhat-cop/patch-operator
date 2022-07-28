@@ -50,6 +50,12 @@ rules:
   - list
   - watch
 - apiGroups:
+  - authentication.k8s.io
+  resources:
+  - '*'
+  verbs:
+  - impersonate
+- apiGroups:
   - redhatcop.redhat.io
   resources:
   - patches
