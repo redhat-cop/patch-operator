@@ -18,6 +18,9 @@ The patch operator helps with defining patches in a declarative way. This operat
   - [Creation-time patch injection](#creation-time-patch-injection)
     - [Security Considerations](#security-considerations)
     - [Installing the creation time webhook](#installing-the-creation-time-webhook)
+      - [Enabling creation time time webhook (OLM)](#enabling-creation-time-time-webhook-olm)
+      - [Enabling creation time time webhook (Helm)](#enabling-creation-time-time-webhook-helm)
+      - [Webhook rules](#webhook-rules)
   - [Runtime patch enforcement](#runtime-patch-enforcement)
     - [Patch Controller Security Considerations](#patch-controller-security-considerations)
     - [Patch Controller Performance Considerations](#patch-controller-performance-considerations)
@@ -188,9 +191,7 @@ spec:
       targetObjectRef:
         apiVersion: admissionregistration.k8s.io/v1
         kind: MutatingWebhookConfiguration
-        labelSelector:
-          matchLabels:
-            redhat-cop.redhat.io/patch-operator: "true"
+        name: patch-operator-inject
       patchTemplate: '[{"op": "replace", "path": "/webhooks/0/clientConfig/caBundle", "value":"{{ (index (index . 1).data "olmCAKey") }}"}]'     
       patchType: application/json-patch+json
       sourceObjectRefs:
@@ -210,8 +211,6 @@ apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   name: patch-operator-inject
-  labels:
-    redhat-cop.redhat.io/patch-operator: "true"
 webhooks:
 - admissionReviewVersions:
   - v1
