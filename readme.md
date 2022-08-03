@@ -201,9 +201,7 @@ spec:
         namespace: patch-operator
 ```
 
-Note that the `targetObjectRef` uses a _Label Selector_ to query for _MutatingWebhookConfigurations_ with the label `redhat-cop.redhat.io/patch-operator: "true"`.
-
-The following is an example of a _MutatingWebhookConfiguration_ with the required label that can be used to support the creation time webhook.
+Here is the webhook:
 
 ```yaml
 ---
