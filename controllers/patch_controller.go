@@ -31,6 +31,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -132,34 +133,67 @@ func (r *PatchReconciler) SetupWithManager(mgr ctrl.Manager) error {
 func (r *PatchReconciler) getRestConfigFromInstance(ctx context.Context, instance *redhatcopv1alpha1.Patch) (*rest.Config, error) {
 	rlog := log.FromContext(ctx)
 	sa := corev1.ServiceAccount{}
-	err := r.GetClient().Get(ctx, types.NamespacedName{Name: instance.Spec.ServiceAccountRef.Name, Namespace: instance.GetNamespace()}, &sa)
+
+	secretList := &corev1.SecretList{}
+	err := r.GetClient().List(ctx, secretList, &client.ListOptions{
+		Namespace: instance.GetNamespace(),
+	})
+
+	var saSecret corev1.Secret
+
 	if err != nil {
-		rlog.Error(err, "unable to get the specified", "service account", types.NamespacedName{Name: instance.Spec.ServiceAccountRef.Name, Namespace: instance.GetNamespace()})
-		return &rest.Config{}, err
+		rlog.Error(err, "unable to retrieve secrets", "in namespace", instance.GetNamespace())
+		return nil, err
 	}
-	var tokenSecret corev1.Secret
-	for _, secretRef := range sa.Secrets {
-		secret := corev1.Secret{}
-		err := r.GetClient().Get(ctx, types.NamespacedName{Name: secretRef.Name, Namespace: instance.GetNamespace()}, &secret)
+	for _, secret := range secretList.Items {
+		if saname, ok := secret.Annotations["kubernetes.io/service-account.name"]; ok {
+			if secret.Type == corev1.SecretTypeServiceAccountToken && saname == instance.Spec.ServiceAccountRef.Name {
+				if _, ok := secret.Data["token"]; ok {
+					saSecret = secret
+					break
+				} else {
+					return nil, errs.New("unable to find \"token\" key in secret" + instance.GetNamespace() + "/" + secret.Name)
+				}
+			}
+		}
+	}
+	// if the map is still empty we test the old approach, pre kube 1.21
+	if _, ok := saSecret.Data["token"]; !ok {
+		err := r.GetClient().Get(ctx, types.NamespacedName{Name: instance.Spec.ServiceAccountRef.Name, Namespace: instance.GetNamespace()}, &sa)
 		if err != nil {
-			rlog.Error(err, "(ignoring) unable to get ", "ref secret", types.NamespacedName{Name: secretRef.Name, Namespace: instance.GetNamespace()})
-			continue
+			rlog.Error(err, "unable to get the specified", "service account", types.NamespacedName{Name: instance.Spec.ServiceAccountRef.Name, Namespace: instance.GetNamespace()})
+			return &rest.Config{}, err
 		}
-		if secret.Type == "kubernetes.io/service-account-token" {
-			tokenSecret = secret
-			break
+		var tokenSecret corev1.Secret
+		for _, secretRef := range sa.Secrets {
+			secret := corev1.Secret{}
+			err := r.GetClient().Get(ctx, types.NamespacedName{Name: secretRef.Name, Namespace: instance.GetNamespace()}, &secret)
+			if err != nil {
+				rlog.Error(err, "(ignoring) unable to get ", "ref secret", types.NamespacedName{Name: secretRef.Name, Namespace: instance.GetNamespace()})
+				continue
+			}
+			if secret.Type == "kubernetes.io/service-account-token" {
+				tokenSecret = secret
+				break
+			}
+		}
+		if tokenSecret.Data == nil {
+			err = errs.New("unable to find secret of type kubernetes.io/service-account-token")
+			rlog.Error(err, "unable to find secret of type kubernetes.io/service-account-token for", "service account", sa)
+			return &rest.Config{}, err
+		}
+		if _, ok := tokenSecret.Data["token"]; ok {
+			saSecret = tokenSecret
+		} else {
+			return nil, errs.New("unable to find \"token\" key in secret" + instance.GetNamespace() + "/" + tokenSecret.Name)
 		}
 	}
-	if tokenSecret.Data == nil {
-		err = errs.New("unable to find secret of type kubernetes.io/service-account-token")
-		rlog.Error(err, "unable to find secret of type kubernetes.io/service-account-token for", "service account", sa)
-		return &rest.Config{}, err
-	}
+	// if we got here the map should be filled up
 	config := rest.Config{
 		Host:        r.GetRestConfig().Host,
-		BearerToken: string(tokenSecret.Data["token"]),
+		BearerToken: string(saSecret.Data["token"]),
 		TLSClientConfig: rest.TLSClientConfig{
-			CAData: tokenSecret.Data["ca.crt"],
+			CAData: saSecret.Data["ca.crt"],
 		},
 	}
 	return &config, nil
