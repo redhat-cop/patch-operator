@@ -385,6 +385,18 @@ The `deployer` service accounts from all namespaces are selected as target of th
 
 The patch enforcement enacted by the patch controller is executed with a client which uses the service account referenced by the `serviceAccountRef` field. So before a patch object can actually work an administrator must have granted the needed permissions to a service account in the same namespace. The `serviceAccountRef` will default to the `default` service account if not specified.
 
+_Note:_  with kubernetes 1.24, service account token secrets are not created automatically anymore (see also [here](https://kubernetes.io/docs/concepts/configuration/secret/#service-account-token-secrets)). The path-operator relies on these secrets. So you have to create the secret for the service account referenced in the `serviceAccountRef`. Here is an example of how to create a service account token secret for the `default` service account:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: default-service-account-secret
+  annotations:
+    kubernetes.io/service-account.name: "default"
+type: kubernetes.io/service-account-token
+```
+
 ### Patch Controller Performance Considerations
 
 The patch controller will create a controller-manager and per `Patch` object and a reconciler for each of the `PatchSpec` defined in the array on patches in the `Patch` object.
