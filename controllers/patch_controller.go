@@ -18,20 +18,18 @@ package controllers
 
 import (
 	"context"
-	errs "errors"
 
 	"github.com/redhat-cop/operator-utils/pkg/util"
 	"github.com/redhat-cop/operator-utils/pkg/util/apis"
 	"github.com/redhat-cop/operator-utils/pkg/util/lockedresourcecontroller"
 	"github.com/redhat-cop/operator-utils/pkg/util/lockedresourcecontroller/lockedpatch"
 	redhatcopv1alpha1 "github.com/redhat-cop/patch-operator/api/v1alpha1"
-	corev1 "k8s.io/api/core/v1"
+	authv1 "k8s.io/api/authentication/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -48,7 +46,7 @@ type PatchReconciler struct {
 //+kubebuilder:rbac:groups=redhatcop.redhat.io,resources=patches/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=redhatcop.redhat.io,resources=patches/finalizers,verbs=update
 //+kubebuilder:rbac:groups="",resources=events,verbs=get;list;watch;create;patch
-//+kubebuilder:rbac:groups="",resources=serviceaccounts;secrets,verbs=get;list;watch
+//+kubebuilder:rbac:groups="",resources=serviceaccounts/token,verbs=create
 
 // needed by the patch webhook
 //+kubebuilder:rbac:groups="*",resources="*",verbs=get;list;watch
@@ -130,70 +128,49 @@ func (r *PatchReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-func (r *PatchReconciler) getRestConfigFromInstance(ctx context.Context, instance *redhatcopv1alpha1.Patch) (*rest.Config, error) {
-	rlog := log.FromContext(ctx)
-	sa := corev1.ServiceAccount{}
+func getJWTToken(context context.Context, serviceAccountName string, kubeNamespace string) (string, error) {
+	log := log.FromContext(context)
 
-	secretList := &corev1.SecretList{}
-	err := r.GetClient().List(ctx, secretList, &client.ListOptions{
-		Namespace: instance.GetNamespace(),
-	})
+	restConfig := context.Value("restConfig").(*rest.Config)
+	expiration := int64(600)
 
-	var saSecret corev1.Secret
+	treq := &authv1.TokenRequest{
+		Spec: authv1.TokenRequestSpec{
+			ExpirationSeconds: &expiration,
+		},
+	}
+
+	clientset, err := kubernetes.NewForConfig(restConfig)
 
 	if err != nil {
-		rlog.Error(err, "unable to retrieve secrets", "in namespace", instance.GetNamespace())
+		log.Error(err, "unable to create kubernetes clientset")
+		return "", err
+	}
+
+	treq, err = clientset.CoreV1().ServiceAccounts(kubeNamespace).CreateToken(context, serviceAccountName, treq, metav1.CreateOptions{})
+	if err != nil {
+		log.Error(err, "unable to create service account token request", "in namespace", kubeNamespace, "for service account", serviceAccountName)
+		return "", err
+	}
+
+	return treq.Status.Token, nil
+}
+
+func (r *PatchReconciler) getRestConfigFromInstance(ctx context.Context, instance *redhatcopv1alpha1.Patch) (*rest.Config, error) {
+	rlog := log.FromContext(ctx)
+	ctx = context.WithValue(ctx, "restConfig", r.GetRestConfig())
+	token, err := getJWTToken(ctx, instance.Spec.ServiceAccountRef.Name, instance.GetNamespace())
+	if err != nil {
+		rlog.Error(err, "unable to retrieve token for", "service account", instance.Spec.ServiceAccountRef.Name, "in namespace", instance.GetNamespace())
 		return nil, err
 	}
-	for _, secret := range secretList.Items {
-		if saname, ok := secret.Annotations["kubernetes.io/service-account.name"]; ok {
-			if secret.Type == corev1.SecretTypeServiceAccountToken && saname == instance.Spec.ServiceAccountRef.Name {
-				if _, ok := secret.Data["token"]; ok {
-					saSecret = secret
-					break
-				} else {
-					return nil, errs.New("unable to find \"token\" key in secret" + instance.GetNamespace() + "/" + secret.Name)
-				}
-			}
-		}
-	}
-	// if the map is still empty we test the old approach, pre kube 1.21
-	if _, ok := saSecret.Data["token"]; !ok {
-		err := r.GetClient().Get(ctx, types.NamespacedName{Name: instance.Spec.ServiceAccountRef.Name, Namespace: instance.GetNamespace()}, &sa)
-		if err != nil {
-			rlog.Error(err, "unable to get the specified", "service account", types.NamespacedName{Name: instance.Spec.ServiceAccountRef.Name, Namespace: instance.GetNamespace()})
-			return &rest.Config{}, err
-		}
-		var tokenSecret corev1.Secret
-		for _, secretRef := range sa.Secrets {
-			secret := corev1.Secret{}
-			err := r.GetClient().Get(ctx, types.NamespacedName{Name: secretRef.Name, Namespace: instance.GetNamespace()}, &secret)
-			if err != nil {
-				rlog.Error(err, "(ignoring) unable to get ", "ref secret", types.NamespacedName{Name: secretRef.Name, Namespace: instance.GetNamespace()})
-				continue
-			}
-			if secret.Type == "kubernetes.io/service-account-token" {
-				tokenSecret = secret
-				break
-			}
-		}
-		if tokenSecret.Data == nil {
-			err = errs.New("unable to find secret of type kubernetes.io/service-account-token")
-			rlog.Error(err, "unable to find secret of type kubernetes.io/service-account-token for", "service account", sa)
-			return &rest.Config{}, err
-		}
-		if _, ok := tokenSecret.Data["token"]; ok {
-			saSecret = tokenSecret
-		} else {
-			return nil, errs.New("unable to find \"token\" key in secret" + instance.GetNamespace() + "/" + tokenSecret.Name)
-		}
-	}
-	// if we got here the map should be filled up
+
 	config := rest.Config{
 		Host:        r.GetRestConfig().Host,
-		BearerToken: string(saSecret.Data["token"]),
+		BearerToken: token,
 		TLSClientConfig: rest.TLSClientConfig{
-			CAData: saSecret.Data["ca.crt"],
+			CAData: r.GetRestConfig().CAData,
+			CAFile: r.GetRestConfig().CAFile,
 		},
 	}
 	return &config, nil

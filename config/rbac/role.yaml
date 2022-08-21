@@ -27,12 +27,9 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - secrets
-  - serviceaccounts
+  - serviceaccounts/token
   verbs:
-  - get
-  - list
-  - watch
+  - create
 - apiGroups:
   - '*'
   resources:
