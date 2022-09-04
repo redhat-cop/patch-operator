@@ -150,7 +150,6 @@ func getJWTToken(context context.Context, serviceAccountName string, kubeNamespa
 		duration = defaultDuration
 	}
 
-	// we request a token valid for 1 year. This token will be refreshed when the pod restarts, or when the patch changes. We assume both of these events will happen with a frequency of more than once eveny year
 	seconds := int64(duration.Seconds())
 	treq := &authv1.TokenRequest{
 		Spec: authv1.TokenRequestSpec{
