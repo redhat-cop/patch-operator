@@ -18,6 +18,8 @@ package controllers
 
 import (
 	"context"
+	"os"
+	"time"
 
 	"github.com/redhat-cop/operator-utils/pkg/util"
 	"github.com/redhat-cop/operator-utils/pkg/util/apis"
@@ -132,11 +134,26 @@ func getJWTToken(context context.Context, serviceAccountName string, kubeNamespa
 	log := log.FromContext(context)
 
 	restConfig := context.Value("restConfig").(*rest.Config)
-	expiration := int64(600)
+	lenght, found := os.LookupEnv("SERVICE_ACCOUNT_TOKEN_EXPIRATION_DURATION")
+	//default is 1 year
+	defaultDuration, _ := time.ParseDuration("8760h")
+	var duration time.Duration
+	if found {
+		parsedDuration, err := time.ParseDuration(lenght)
+		if err != nil {
+			log.Error(err, "unable to parse SERVICE_ACCOUNT_TOKEN_EXPIRATION_DURATION to duration, continuing with", "default duration", defaultDuration)
+			duration = defaultDuration
+		} else {
+			duration = parsedDuration
+		}
+	} else {
+		duration = defaultDuration
+	}
 
+	seconds := int64(duration.Seconds())
 	treq := &authv1.TokenRequest{
 		Spec: authv1.TokenRequestSpec{
-			ExpirationSeconds: &expiration,
+			ExpirationSeconds: &seconds,
 		},
 	}
 
@@ -152,6 +169,8 @@ func getJWTToken(context context.Context, serviceAccountName string, kubeNamespa
 		log.Error(err, "unable to create service account token request", "in namespace", kubeNamespace, "for service account", serviceAccountName)
 		return "", err
 	}
+
+	log.Info("token expiration: " + treq.Status.ExpirationTimestamp.String())
 
 	return treq.Status.Token, nil
 }
