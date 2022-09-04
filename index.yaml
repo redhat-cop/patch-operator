@@ -2,8 +2,25 @@ apiVersion: v1
 entries:
   patch-operator:
   - apiVersion: v1
+    appVersion: v0.1.9
+    created: "2022-09-04T13:40:33.5076334Z"
+    description: Helm chart that deploys patch-operator
+    digest: 95afc5d3f78412b1c52ba7cd0530ae5f4e32bdaf80dcf59bbd4a09ccacee0ded
+    keywords:
+    - volume
+    - storage
+    - csi
+    - expansion
+    - monitoring
+    name: patch-operator
+    sources:
+    - https://github.com/redhat-cop/patch-operator
+    urls:
+    - https://redhat-cop.github.io/patch-operator/patch-operator/patch-operator-v0.1.9.tgz
+    version: v0.1.9
+  - apiVersion: v1
     appVersion: v0.1.8
-    created: "2022-08-26T20:53:39.09516872Z"
+    created: "2022-09-04T13:40:33.506150407Z"
     description: Helm chart that deploys patch-operator
     digest: 91e710a0609e24797b1da7575306321d860d7140fa6b15df1ef594980bb5047f
     keywords:
@@ -20,7 +37,7 @@ entries:
     version: v0.1.8
   - apiVersion: v1
     appVersion: v0.1.7
-    created: "2022-08-26T20:53:39.093835204Z"
+    created: "2022-09-04T13:40:33.505208339Z"
     description: Helm chart that deploys patch-operator
     digest: 9d9b2623d3fe308fb2994813fac715c50d55adfd5aa4eb62d27254dc1405b249
     keywords:
@@ -37,7 +54,7 @@ entries:
     version: v0.1.7
   - apiVersion: v1
     appVersion: v0.1.6
-    created: "2022-08-26T20:53:39.092962992Z"
+    created: "2022-09-04T13:40:33.504609322Z"
     description: Helm chart that deploys patch-operator
     digest: fd186e1a0427cfdb6a40ff5efee1427dc4ca59ec934235face07aa5d76788374
     keywords:
@@ -54,7 +71,7 @@ entries:
     version: v0.1.6
   - apiVersion: v1
     appVersion: v0.1.5
-    created: "2022-08-26T20:53:39.092117282Z"
+    created: "2022-09-04T13:40:33.503993308Z"
     description: Helm chart that deploys patch-operator
     digest: dac28cbe3fb1aeb9d7278f7c4a8934dd5b090718c7b8b08444221779e65fed7e
     keywords:
@@ -71,7 +88,7 @@ entries:
     version: v0.1.5
   - apiVersion: v1
     appVersion: v0.1.4
-    created: "2022-08-26T20:53:39.091280271Z"
+    created: "2022-09-04T13:40:33.503389792Z"
     description: Helm chart that deploys patch-operator
     digest: f2ad900b2b8db3a5287a8798a077620b527c0213fb7112d1721ec695749a101c
     keywords:
@@ -87,25 +104,8 @@ entries:
     - https://redhat-cop.github.io/patch-operator/patch-operator/patch-operator-v0.1.4.tgz
     version: v0.1.4
   - apiVersion: v1
-    appVersion: v0.1.3
-    created: "2022-08-26T20:53:39.09039286Z"
-    description: Helm chart that deploys patch-operator
-    digest: 321df9cedeef64958b78c315e6dda769570a1d6710f580a0dbe2a4714689986b
-    keywords:
-    - volume
-    - storage
-    - csi
-    - expansion
-    - monitoring
-    name: patch-operator
-    sources:
-    - https://github.com/redhat-cop/patch-operator
-    urls:
-    - https://redhat-cop.github.io/patch-operator/patch-operator/patch-operator-v0.1.3.tgz
-    version: v0.1.3
-  - apiVersion: v1
     appVersion: 0.1.3
-    created: "2022-08-26T20:53:39.087964329Z"
+    created: "2022-09-04T13:40:33.500796954Z"
     description: Helm chart that deploys patch-operator
     digest: 984b0c1f868c90ef06a47a4941efa5ef1bbf5a34fbb3c36e8161065b06039a28
     keywords:
@@ -121,8 +121,25 @@ entries:
     - https://redhat-cop.github.io/patch-operator/patch-operator/patch-operator-0.1.3.tgz
     version: 0.1.3
   - apiVersion: v1
+    appVersion: v0.1.3
+    created: "2022-09-04T13:40:33.502785876Z"
+    description: Helm chart that deploys patch-operator
+    digest: 321df9cedeef64958b78c315e6dda769570a1d6710f580a0dbe2a4714689986b
+    keywords:
+    - volume
+    - storage
+    - csi
+    - expansion
+    - monitoring
+    name: patch-operator
+    sources:
+    - https://github.com/redhat-cop/patch-operator
+    urls:
+    - https://redhat-cop.github.io/patch-operator/patch-operator/patch-operator-v0.1.3.tgz
+    version: v0.1.3
+  - apiVersion: v1
     appVersion: v0.1.2
-    created: "2022-08-26T20:53:39.08962465Z"
+    created: "2022-09-04T13:40:33.502153464Z"
     description: Helm chart that deploys patch-operator
     digest: 1030053e5658eb8129afa24233e32ab0a60cbc6902973afc64d85d0d72e5e32f
     keywords:
@@ -139,7 +156,7 @@ entries:
     version: v0.1.2
   - apiVersion: v1
     appVersion: v0.1.1
-    created: "2022-08-26T20:53:39.08881264Z"
+    created: "2022-09-04T13:40:33.501525852Z"
     description: Helm chart that deploys patch-operator
     digest: 7e6d0d5e569ccddb5a45eecfed5522d021d549709734b9f192b914904c9a5b99
     keywords:
@@ -154,4 +171,4 @@ entries:
     urls:
     - https://redhat-cop.github.io/patch-operator/patch-operator/patch-operator-v0.1.1.tgz
     version: v0.1.1
-generated: "2022-08-26T20:53:39.086250107Z"
+generated: "2022-09-04T13:40:33.499863484Z"
