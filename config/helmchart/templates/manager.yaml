@@ -4,6 +4,7 @@ metadata:
   name: {{ include "patch-operator.fullname" . }}
   labels:
     {{- include "patch-operator.labels" . | nindent 4 }}
+  namespace: {{ include "patch-operator.fullname" . }}
 spec:
   selector:
     matchLabels:
