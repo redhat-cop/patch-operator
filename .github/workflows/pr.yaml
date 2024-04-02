@@ -8,7 +8,7 @@ on:
 jobs:
   shared-operator-workflow:
     name: shared-operator-workflow
-    uses: redhat-cop/github-workflows-operators/.github/workflows/pr-operator.yml@v1.0.4
+    uses: redhat-cop/github-workflows-operators/.github/workflows/pr-operator.yml@db94696b37f75c4d3d2e571de44612bf24a26d68 # v1.0.4
     with: 
       RUN_UNIT_TESTS: true
       RUN_INTEGRATION_TESTS: false
