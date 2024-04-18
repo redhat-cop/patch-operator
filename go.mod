@@ -1,6 +1,6 @@
 module github.com/redhat-cop/patch-operator
 
-go 1.18
+go 1.21.9
 
 require (
 	github.com/evanphx/json-patch v5.6.0+incompatible
