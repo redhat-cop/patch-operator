@@ -175,6 +175,7 @@ ENVTEST ?= $(LOCALBIN)/setup-envtest
 
 KUSTOMIZE_VERSION ?= v3.8.7
 CONTROLLER_TOOLS_VERSION ?= v0.9.0
+ENVTEST_VERSION ?= v0.0.0-20230216140739-c98506dc3b8e
 
 
 .PHONY: controller-gen
@@ -191,7 +192,7 @@ $(KUSTOMIZE): $(LOCALBIN)
 .PHONY: envtest
 envtest: $(ENVTEST) ## Download envtest-setup locally if necessary.
 $(ENVTEST): $(LOCALBIN)
-	GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+	GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@$(ENVTEST_VERSION)
 
 .PHONY: bundle
 bundle: manifests kustomize ## Generate bundle manifests and metadata, then validate generated files.
