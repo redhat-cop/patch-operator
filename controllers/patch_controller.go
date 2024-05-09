@@ -206,7 +206,7 @@ func (r *PatchReconciler) manageCleanUpLogic(ctx context.Context, instance *redh
 	return nil
 }
 
-//ManageError manage error sets an error status in the CR and fires an event, finally it returns the error so the operator can re-attempt
+// ManageError manage error sets an error status in the CR and fires an event, finally it returns the error so the operator can re-attempt
 func (er *PatchReconciler) ManageError(ctx context.Context, instance *redhatcopv1alpha1.Patch, issue error) (reconcile.Result, error) {
 	rlog := log.FromContext(ctx)
 	er.GetRecorder().Event(instance, "Warning", "ProcessingError", issue.Error())
