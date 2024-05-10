@@ -2,8 +2,25 @@ apiVersion: v1
 entries:
   patch-operator:
   - apiVersion: v1
+    appVersion: v0.1.11
+    created: "2024-05-10T14:08:58.528717797Z"
+    description: Helm chart that deploys patch-operator
+    digest: dd99efff2a894d0a18879e87e3155d8228858521df5a341b8be9f5cf6e068e6b
+    keywords:
+    - volume
+    - storage
+    - csi
+    - expansion
+    - monitoring
+    name: patch-operator
+    sources:
+    - https://github.com/redhat-cop/patch-operator
+    urls:
+    - https://redhat-cop.github.io/patch-operator/patch-operator/patch-operator-v0.1.11.tgz
+    version: v0.1.11
+  - apiVersion: v1
     appVersion: v0.1.10
-    created: "2024-04-18T13:16:01.827447028Z"
+    created: "2024-05-10T14:08:58.528009265Z"
     description: Helm chart that deploys patch-operator
     digest: c54fc7f2003a5395e9bf52e242ff13dcfb607eb85f46d38bc45af803e05cc25b
     keywords:
@@ -20,7 +37,7 @@ entries:
     version: v0.1.10
   - apiVersion: v1
     appVersion: v0.1.9
-    created: "2024-04-18T13:16:01.831398199Z"
+    created: "2024-05-10T14:08:58.53401214Z"
     description: Helm chart that deploys patch-operator
     digest: 95afc5d3f78412b1c52ba7cd0530ae5f4e32bdaf80dcf59bbd4a09ccacee0ded
     keywords:
@@ -37,7 +54,7 @@ entries:
     version: v0.1.9
   - apiVersion: v1
     appVersion: v0.1.8
-    created: "2024-04-18T13:16:01.830979317Z"
+    created: "2024-05-10T14:08:58.533356656Z"
     description: Helm chart that deploys patch-operator
     digest: 91e710a0609e24797b1da7575306321d860d7140fa6b15df1ef594980bb5047f
     keywords:
@@ -54,7 +71,7 @@ entries:
     version: v0.1.8
   - apiVersion: v1
     appVersion: v0.1.7
-    created: "2024-04-18T13:16:01.8305466Z"
+    created: "2024-05-10T14:08:58.532698428Z"
     description: Helm chart that deploys patch-operator
     digest: 9d9b2623d3fe308fb2994813fac715c50d55adfd5aa4eb62d27254dc1405b249
     keywords:
@@ -71,7 +88,7 @@ entries:
     version: v0.1.7
   - apiVersion: v1
     appVersion: v0.1.6
-    created: "2024-04-18T13:16:01.830110536Z"
+    created: "2024-05-10T14:08:58.532023277Z"
     description: Helm chart that deploys patch-operator
     digest: fd186e1a0427cfdb6a40ff5efee1427dc4ca59ec934235face07aa5d76788374
     keywords:
@@ -88,7 +105,7 @@ entries:
     version: v0.1.6
   - apiVersion: v1
     appVersion: v0.1.5
-    created: "2024-04-18T13:16:01.829625301Z"
+    created: "2024-05-10T14:08:58.531350211Z"
     description: Helm chart that deploys patch-operator
     digest: dac28cbe3fb1aeb9d7278f7c4a8934dd5b090718c7b8b08444221779e65fed7e
     keywords:
@@ -105,7 +122,7 @@ entries:
     version: v0.1.5
   - apiVersion: v1
     appVersion: v0.1.4
-    created: "2024-04-18T13:16:01.829198193Z"
+    created: "2024-05-10T14:08:58.530711529Z"
     description: Helm chart that deploys patch-operator
     digest: f2ad900b2b8db3a5287a8798a077620b527c0213fb7112d1721ec695749a101c
     keywords:
@@ -122,7 +139,7 @@ entries:
     version: v0.1.4
   - apiVersion: v1
     appVersion: 0.1.3
-    created: "2024-04-18T13:16:01.82598535Z"
+    created: "2024-05-10T14:08:58.52658678Z"
     description: Helm chart that deploys patch-operator
     digest: 984b0c1f868c90ef06a47a4941efa5ef1bbf5a34fbb3c36e8161065b06039a28
     keywords:
@@ -139,7 +156,7 @@ entries:
     version: 0.1.3
   - apiVersion: v1
     appVersion: v0.1.3
-    created: "2024-04-18T13:16:01.828743405Z"
+    created: "2024-05-10T14:08:58.530041919Z"
     description: Helm chart that deploys patch-operator
     digest: 321df9cedeef64958b78c315e6dda769570a1d6710f580a0dbe2a4714689986b
     keywords:
@@ -156,7 +173,7 @@ entries:
     version: v0.1.3
   - apiVersion: v1
     appVersion: v0.1.2
-    created: "2024-04-18T13:16:01.828240597Z"
+    created: "2024-05-10T14:08:58.529400962Z"
     description: Helm chart that deploys patch-operator
     digest: 1030053e5658eb8129afa24233e32ab0a60cbc6902973afc64d85d0d72e5e32f
     keywords:
@@ -173,7 +190,7 @@ entries:
     version: v0.1.2
   - apiVersion: v1
     appVersion: v0.1.1
-    created: "2024-04-18T13:16:01.826603133Z"
+    created: "2024-05-10T14:08:58.527328173Z"
     description: Helm chart that deploys patch-operator
     digest: 7e6d0d5e569ccddb5a45eecfed5522d021d549709734b9f192b914904c9a5b99
     keywords:
@@ -188,4 +205,4 @@ entries:
     urls:
     - https://redhat-cop.github.io/patch-operator/patch-operator/patch-operator-v0.1.1.tgz
     version: v0.1.1
-generated: "2024-04-18T13:16:01.825343522Z"
+generated: "2024-05-10T14:08:58.525282896Z"
