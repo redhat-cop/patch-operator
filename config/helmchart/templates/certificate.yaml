@@ -3,6 +3,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: selfsigned-issuer
+  namespace: {{ .Release.Namespace }}
 spec:
   selfSigned: {}
 ---
@@ -10,6 +11,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: serving-cert
+  namespace: {{ .Release.Namespace }}
 spec:
   dnsNames:
   - patch-operator-webhook-service.{{ .Release.Namespace }}.svc
@@ -23,6 +25,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: metrics-serving-cert
+  namespace: {{ .Release.Namespace }}
 spec:
   dnsNames:
   - patch-operator-controller-manager-metrics-service.{{ .Release.Namespace }}.svc
