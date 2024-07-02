@@ -3,7 +3,7 @@ module github.com/redhat-cop/patch-operator
 go 1.21.9
 
 require (
-	github.com/evanphx/json-patch v5.6.0+incompatible
+	github.com/evanphx/json-patch v5.9.0+incompatible
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.20.1
 	github.com/redhat-cop/operator-utils v1.3.4
