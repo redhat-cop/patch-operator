@@ -13,4 +13,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/raffaelespazzoli/patch-operator
-  newTag: latest
+  newTag: latest@sha256:47bf8e40af3def8af55b96ea5b85adfd4ada33d93f8d661cad233f4948c8b58f
