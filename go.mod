@@ -4,7 +4,7 @@ go 1.21.9
 
 require (
 	github.com/evanphx/json-patch v5.6.0+incompatible
-	github.com/onsi/ginkgo v1.16.5
+	github.com/onsi/ginkgo/v2 v2.25.3
 	github.com/onsi/gomega v1.18.1
 	github.com/redhat-cop/operator-utils v1.3.4
 	k8s.io/api v0.24.2
