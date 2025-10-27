@@ -235,7 +235,11 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: patch-operator-inject
   annotations:
-    cert-manager.io/inject-ca-from: '{{ .Release.Namespace }}/webhook-server-cert'
+    ## use 'cert-manager.io/inject-ca-from' to reference a certificate resource
+    ## use 'cert-manager.io/inject-ca-from-secret' to reference a secret
+    ## reference secret must also have 'cert-manager.io/allow-direct-injection: "true" annotation 
+    ## https://cert-manager.io/docs/concepts/ca-injector/
+    cert-manager.io/inject-ca-from: '{{ .Release.Namespace }}/serving-cert'
 webhooks:
 - admissionReviewVersions:
   - v1
