@@ -29,9 +29,9 @@ affinity: {}
 
 kube_rbac_proxy:
   image:
-    repository: quay.io/redhat-cop/kube-rbac-proxy
+    repository: quay.io/brancz/kube-rbac-proxy
     pullPolicy: IfNotPresent
-    tag: v0.11.0
+    tag: v0.23.1
   resources:
     limits:
       cpu: 500m
