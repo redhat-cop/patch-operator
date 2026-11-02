@@ -20,7 +20,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/redhat-cop/operator-utils/pkg/util/discoveryclient"
+	"github.com/gjkamstra/operator-utils/v2/pkg/util/discoveryclient"
 	apiextension "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"

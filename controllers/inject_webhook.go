@@ -9,8 +9,8 @@ import (
 	"text/template"
 
 	jsonpatch "github.com/evanphx/json-patch"
-	"github.com/redhat-cop/operator-utils/pkg/util/discoveryclient"
-	utilstemplate "github.com/redhat-cop/operator-utils/pkg/util/templates"
+	"github.com/gjkamstra/operator-utils/v2/pkg/util/discoveryclient"
+	utilstemplate "github.com/gjkamstra/operator-utils/v2/pkg/util/templates"
 	v1authn "k8s.io/api/authentication/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -43,7 +43,7 @@ var createTimePatchLog = logf.Log.WithName("create-time-patch-webhook")
 type PatchInjector struct {
 	client     client.Client
 	restConfig *rest.Config
-	decoder    *admission.Decoder
+	decoder    admission.Decoder
 	crr        *CustomResourceDefinitionReconciler
 }
 

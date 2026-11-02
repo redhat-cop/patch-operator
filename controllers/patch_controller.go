@@ -21,10 +21,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/redhat-cop/operator-utils/pkg/util"
-	"github.com/redhat-cop/operator-utils/pkg/util/apis"
-	"github.com/redhat-cop/operator-utils/pkg/util/lockedresourcecontroller"
-	"github.com/redhat-cop/operator-utils/pkg/util/lockedresourcecontroller/lockedpatch"
+	"github.com/gjkamstra/operator-utils/v2/pkg/util"
+	"github.com/gjkamstra/operator-utils/v2/pkg/util/apis"
+	"github.com/gjkamstra/operator-utils/v2/pkg/util/lockedresourcecontroller"
+	"github.com/gjkamstra/operator-utils/v2/pkg/util/lockedresourcecontroller/lockedpatch"
 	redhatcopv1alpha1 "github.com/redhat-cop/patch-operator/api/v1alpha1"
 	authv1 "k8s.io/api/authentication/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -126,7 +126,7 @@ func (r *PatchReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 func (r *PatchReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&redhatcopv1alpha1.Patch{}).
-		WatchesRawSource(&source.Channel{Source: r.GetStatusChangeChannel()}, &handler.EnqueueRequestForObject{}).
+		WatchesRawSource(source.Channel(r.GetStatusChangeChannel(), &handler.EnqueueRequestForObject{})).
 		Complete(r)
 }
 
