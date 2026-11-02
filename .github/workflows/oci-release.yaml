@@ -132,3 +132,34 @@ jobs:
         run: |
           cosign sign --yes ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ env.IMAGE_DIGEST }}
           cosign attest --yes --type spdxjson --predicate ${{ runner.temp }}/sbom.spdx.json ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ env.IMAGE_DIGEST }}
+
+  helm-release:
+    name: helm-release
+    runs-on: ubuntu-24.04
+    needs: merge
+    permissions:
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Build Helm chart
+        # make helmchart renders config/helmchart (kustomize + Chart.yaml.tpl/values.yaml.tpl)
+        # into ./charts/patch-operator. It pulls in its own kustomize/helm binaries (see the
+        # kustomize/helm Makefile targets), so no separate tool setup is needed here.
+        run: |
+          make helmchart VERSION=${{ github.ref_name }} IMG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+
+      - name: Log in to the GitHub Container registry
+        run: |
+          ./bin/helm registry login ${{ env.REGISTRY }} --username ${{ github.actor }} --password-stdin <<< "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Package and push chart
+        # Published to this fork's own GHCR namespace (oci://ghcr.io/<owner>/charts/patch-operator),
+        # not redhat-cop's gh-pages chart repo - publishing there would need COMMUNITY_OPERATOR_PAT/
+        # REGISTRY_USERNAME/REGISTRY_PASSWORD secrets and admin-enabled GitHub Pages this fork
+        # doesn't have, and shouldn't try to submit a fork's build to the upstream chart index anyway.
+        run: |
+          mkdir -p dist
+          ./bin/helm package ./charts/patch-operator -d dist
+          ./bin/helm push dist/patch-operator-*.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts
