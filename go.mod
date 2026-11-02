@@ -9,7 +9,7 @@ require (
 	github.com/onsi/gomega v1.40.0
 	k8s.io/api v0.37.1
 	k8s.io/apiextensions-apiserver v0.37.1
-	k8s.io/apimachinery v0.37.1
+	k8s.io/apimachinery v0.37.2
 	k8s.io/client-go v0.37.1
 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad
 	sigs.k8s.io/controller-runtime v0.25.2
