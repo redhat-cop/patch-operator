@@ -33,8 +33,8 @@ github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S
 github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
 github.com/fxamacker/cbor/v2 v2.9.1 h1:2rWm8B193Ll4VdjsJY28jxs70IdDsHRWgQYAI80+rMQ=
 github.com/fxamacker/cbor/v2 v2.9.1/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
-github.com/gjkamstra/operator-utils/v2 v2.0.0 h1:9CCtwlqPpw9wXarFf7bHTdY33fOlbNp7Z4+GR8hGI58=
-github.com/gjkamstra/operator-utils/v2 v2.0.0/go.mod h1:OFaQqU8mepv33xDcjRrBY9/hj/Pa/ztdHNyhI29+cXc=
+github.com/gjkamstra/operator-utils/v2 v2.0.1 h1:enERjFl9TdFYCFIRhcsWXCN2WoXoCHWT+7jJIf0m/Hk=
+github.com/gjkamstra/operator-utils/v2 v2.0.1/go.mod h1:J51bkNGFVTH2xq8VI0gJc5q5X6f6zJdb1DE6Z8hSgr4=
 github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
 github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
 github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
