@@ -1,0 +1,15 @@
+# Accepted Trivy findings. Each entry must state why it is accepted.
+misconfigurations:
+  # patch-operator evaluates user-defined Patch resources that may target or
+  # reference any kind, so it needs cluster-wide read access (*/* get/list/watch).
+  # Narrowing this role would break arbitrary Patch targets.
+  - id: KSV-0046
+    paths:
+      - config/rbac/role.yaml
+    statement: Wildcard read access is required to patch arbitrary resource kinds.
+  # The injection webhook and serviceAccountRef impersonate the identity named in
+  # a Patch (controllers/inject_webhook.go, controllers/patch_controller.go).
+  - id: KSV-0044
+    paths:
+      - config/rbac/role.yaml
+    statement: Impersonation is required to run patches as the referenced service account.

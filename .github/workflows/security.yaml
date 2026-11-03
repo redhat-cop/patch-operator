@@ -45,6 +45,9 @@ jobs:
           version: v0.76.1
           scan-type: config
           scan-ref: .
+          # Vendored ingress-nginx test chart and a historical chart archive
+          skip-dirs: integration,tmp
+          trivyignores: .trivyignore.yaml
           severity: HIGH,CRITICAL
           exit-code: '1'
           timeout: 10m
