@@ -54,9 +54,7 @@ spec:
         imagePullPolicy: {{ .Values.kube_rbac_proxy.image.pullPolicy }}
         resources:
           {{- toYaml .Values.kube_rbac_proxy.resources | nindent 10 }}
-      - command:
-        - /manager
-        args:
+      - args:
         - --leader-elect
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}

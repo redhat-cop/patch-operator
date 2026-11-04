@@ -37,7 +37,6 @@ The patch operator helps with defining patches in a declarative way. This operat
     - [Test Manually](#test-manually)
     - [Test helm chart locally](#test-helm-chart-locally)
   - [Building/Pushing the operator image](#buildingpushing-the-operator-image)
-  - [Deploy to OLM via bundle](#deploy-to-olm-via-bundle)
   - [Releasing](#releasing)
     - [Cleaning up](#cleaning-up)
 
@@ -477,8 +476,6 @@ exit
 ### Run the operator
 
 ```shell
-export repo=raffaelespazzoli
-docker login quay.io/$repo
 oc new-project patch-operator
 oc project patch-operator
 envsubst < config/local-development/tilt/env-replace-image.yaml > config/local-development/tilt/replace-image.yaml
@@ -516,24 +513,7 @@ kubectl delete -f charts/patch-operator/crds/crds.yaml
 
 ```shell
 export repo=raffaelespazzoli #replace with yours
-docker login quay.io/$repo
-make docker-build IMG=quay.io/$repo/patch-operator:latest
-make docker-push IMG=quay.io/$repo/patch-operator:latest
-```
-
-## Deploy to OLM via bundle
-
-```shell
-make manifests
-make bundle IMG=quay.io/$repo/patch-operator:latest
-operator-sdk bundle validate ./bundle --select-optional name=operatorhub
-make bundle-build BUNDLE_IMG=quay.io/$repo/patch-operator-bundle:latest
-docker push quay.io/$repo/patch-operator-bundle:latest
-operator-sdk bundle validate quay.io/$repo/patch-operator-bundle:latest --select-optional name=operatorhub
-oc new-project patch-operator
-oc label namespace patch-operator openshift.io/cluster-monitoring="true"
-operator-sdk cleanup patch-operator -n patch-operator
-operator-sdk run bundle --install-mode AllNamespaces -n patch-operator quay.io/$repo/patch-operator-bundle:latest
+KO_DOCKER_REPO=quay.io/$repo/patch-operator ko build --bare --tags=latest --push .
 ```
 
 ## Releasing

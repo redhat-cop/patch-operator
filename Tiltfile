@@ -1,23 +1,11 @@
 # -*- mode: Python -*-
 
-compile_cmd = 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/manager main.go'
-image = 'quay.io/' + os.environ['repo'] + '/patch-operator'
+load('ext://ko', 'ko_build')
 
-local_resource(
-  'patch-operator-compile',
-  compile_cmd,
-  deps=['./main.go','./api','./controllers'])
-
-
-custom_build(
-  image,
-  'podman build -t $EXPECTED_REF --ignorefile ci.Dockerfile.dockerignore -f ./ci.Dockerfile .  && podman push $EXPECTED_REF $EXPECTED_REF',
-  entrypoint=['/manager'],
-  deps=['./bin'],
-  live_update=[
-    sync('./bin/manager',"/manager"),
-  ],
-  skips_local_docker=True,
+ko_build(
+  'kind.local/patch-operator',
+  '.',
+  deps=['./main.go', './api', './controllers'],
 )
 
 allow_k8s_contexts(k8s_context())
