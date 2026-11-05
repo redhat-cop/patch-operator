@@ -39,6 +39,7 @@ spec:
             drop:
             - ALL
           readOnlyRootFilesystem: true
+          runAsUser: 90001
       - name: manager
         securityContext:
           allowPrivilegeEscalation: false

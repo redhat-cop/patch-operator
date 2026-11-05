@@ -45,6 +45,7 @@ spec:
             drop:
             - ALL
           readOnlyRootFilesystem: true
+          runAsUser: 90001
         ports:
         - containerPort: 8443
           name: https
@@ -64,6 +65,7 @@ spec:
             drop:
             - ALL
           readOnlyRootFilesystem: true
+          runAsUser: 20001
         volumeMounts:
         - name: webhook-server-cert
           readOnly: true
